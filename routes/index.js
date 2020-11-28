@@ -117,13 +117,39 @@ router.patch("/:ownerId/pets/:petId", (req, res, next) => {
         .catch(err => next(err));
 });
 
+//Delete Unwanted
+router.delete("/:ownerId/:petId", (req, res, next) => {
+    const { ownerId, petId } = req.params;
+
+    Owner.findByIdAndUpdate(
+        ownerId,
+        {$pull: {pets: petId}}
+    )
+    .then(() => {
+        return res.status(200).json({
+            message: "deleted"
+        })
+    })
+    .catch(err => next(err))
+})
+
 // Delete a single pet for an owner
 router.delete("/:ownerId/pets/:petId", (req, res, next) => {
-    Pet.findByIdAndDelete(req.params.petId)
+    const { ownerId, petId } = req.params;
+
+    return Pet.findByIdAndDelete(petId)
         .then(pet => {
-            return res.status(200).json(pet)
+            return Owner.findByIdAndUpdate(
+                ownerId,
+                {$pull: {pets: pet._id}}
+            )
         })
-        .catch(err => next(err));
+        .then(() => {
+            return res.status(200).json({
+                message: "Question successfully deleted"
+            })
+        })
+        .catch(err => next(err))
 });
 
 
