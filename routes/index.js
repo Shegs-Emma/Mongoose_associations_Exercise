@@ -146,7 +146,7 @@ router.delete("/:ownerId/pets/:petId", (req, res, next) => {
         })
         .then(() => {
             return res.status(200).json({
-                message: "Question successfully deleted"
+                message: "Pet successfully deleted"
             })
         })
         .catch(err => next(err))
